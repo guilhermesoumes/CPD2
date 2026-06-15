@@ -129,9 +129,6 @@ def perguntas_IA(arquivo, lista_perguntas):
         check_embedding_ctx_length=False
     )
 
-    # nome do arquivo sem extensão
-    #nome_arquivo = Path(arquivo).stem
-
     import re
 
     nome_arquivo = Path(arquivo).stem
@@ -141,13 +138,6 @@ def perguntas_IA(arquivo, lista_perguntas):
         '_',
         nome_arquivo
     )
-
-    #print("nome_arquivo =", nome_arquivo)
-
-    #print("\nCriando Chroma...")
-    #print("Persist:", "./" + nome_arquivo)
-    #print("Qtd docs:", len(documents_langchain))
-
 
     persist_directory = Path("vectorstores") / "temp_db"
 
@@ -161,12 +151,6 @@ def perguntas_IA(arquivo, lista_perguntas):
         parents=True,
         exist_ok=True
     )
-
-    #print(persist_directory)
-
-    #print("persist_directory =", persist_directory)
-    #print("persist_directory absoluto =", persist_directory.resolve())
-    #print("existe =", persist_directory.exists())
 
     print("Gerando embeddings...")
     # Criação do Vector Store no Chroma
@@ -216,7 +200,7 @@ def perguntas_IA(arquivo, lista_perguntas):
         Apresente os trechos EXATOS e a página encontrados no documento no formato:
 
         '''
-        O trecho onde a informação foi encontrada: (trecho), na página: (página)
+        - Trecho: (trecho), na página: (página)\n
         '''
 
         3. Conclusão:
@@ -241,21 +225,12 @@ def perguntas_IA(arquivo, lista_perguntas):
 
     respostas = []
     for pergunta in lista_perguntas:
-        #print("Pergunta:", pergunta)
-
-        #teste = embeddings.embed_query(pergunta)
-        #print(teste)
-
-        #print("Embedding da pergunta OK")
-
         resultados = retriever.invoke(pergunta)
 
         contexto = ''
 
         for resultado in resultados:
             contexto = contexto + "Página: {" + str(resultado.metadata['page']) + "}, Conteúdo do chunk: {" + resultado.page_content + "}.\n\n"
-
-        #print(contexto)
 
         resposta = chain.invoke({
             "contexto": contexto,

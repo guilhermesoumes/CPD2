@@ -440,30 +440,22 @@ def gerar_pdf(pdf_path,
     p.drawOn(c, 50, y - h)
     y -= h + 10
 
-    # Transformação de mardown para paragraph. Paragraph é melhor para tratar quebras de linha.
-    def md_para_paragraph(texto):
-        texto = texto.strip()
+    import re
+    from xml.sax.saxutils import escape
 
+    def preparar_texto_reportlab(texto):
+        # Padroniza tags de quebra de linha
+        texto = re.sub(r'<br\s*>', '<br/>', texto, flags=re.I)
+
+        # Protege temporariamente as tags <br/>
+        marcador = "__BR_TEMP__"
+        texto = texto.replace("<br/>", marcador)
+
+        # Escapa caracteres HTML
         texto = escape(texto)
 
-        # Negrito
-        texto = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", texto)
-
-        # Itálico
-        texto = re.sub(r"\*(.*?)\*", r"<i>\1</i>", texto)
-
-        # Títulos ###
-        texto = re.sub(r"^###\s*(.*)", r"<b>\1</b><br/>", texto, flags=re.MULTILINE)
-        texto = re.sub(r"^##\s*(.*)", r"<br/><b>\1</b><br/>", texto, flags=re.MULTILINE)
-
-        # Listas com "-"
-        texto = re.sub(r"\n-\s*", r"<br/>• ", texto)
-
-
-        # Quebras de linha
-        texto = texto.replace("\n", "<br/>")
-        texto = texto.replace("<br/><br/><br/><br/>", "<br/><br/>")
-        texto = texto.replace("<br/><br/><br/>", "<br/><br/>")
+        # Restaura as quebras de linha
+        texto = texto.replace(marcador, "<br/>")
 
         return texto
 
@@ -474,22 +466,21 @@ def gerar_pdf(pdf_path,
     dados = [['Pergunta', 'Resposta', 'Trecho que comprova']]
     for pergunta in range(len(e3_perguntas)):
         resp = re.findall(r"\d+\s*.\s*(.*?)(?=\n\d+\s*.|$)", e3_respostas[pergunta], re.S)
-        print(pergunta)
-        print(e3_respostas[pergunta])
-        #resp = re.findall(r"\d\.\s*(.*?)(?=\n\d\.|$)", e3_respostas[i], re.S)
+
         if "sim" in resp[-1].lower():
             col2 = 'Sim'
         elif "não" in resp[-1].lower():
             col2 = 'Não'
 
-        print(resp)
         resp[-2] = resp[-2].replace("'''", "")
         resp[-2] = resp[-2].strip()
         resp[-2] = resp[-2].replace("\n\n\n", "\n\n")
         resp[-2] = resp[-2].strip()
         resp[-2] = resp[-2].strip()
-        dados.append([Paragraph(e3_perguntas[pergunta], style), col2, Paragraph(md_para_paragraph(resp[-2]), style)])
-        print(md_para_paragraph(resp[-2]))
+
+        texto = preparar_texto_reportlab(resp[-2])
+
+        dados.append([Paragraph(e3_perguntas[pergunta], style), col2, Paragraph(texto, style)])
 
 
     # Criar tabela

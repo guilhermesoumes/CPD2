@@ -1,7 +1,7 @@
 import checks.Templates.Template_pdf_estudo as Template_pdf_estudo
 
 pdf_path = "C:/Users/guilherme.smesquita/Desktop/Export_RAC/345-DF_LT345/Tracado\RAC-001-2026_BR-345-DF_ETRC_LT-345.pdf"
-relatorio = "C:/Users/guilherme.smesquita/Desktop/Anexo Relatório de Estudo de Traçado Lote 1 (6119364).pdf"
+relatorio = 'C:/Users/guilherme.smesquita/Desktop/Volume 2 Estudos de Traçado Lote 1.pdf'
 e1_tabela = []
 conf_geral = 0
 
