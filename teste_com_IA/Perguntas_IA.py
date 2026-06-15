@@ -12,6 +12,7 @@ def perguntas_IA(arquivo, lista_perguntas):
     from pathlib import Path
     import subprocess
     import shutil
+    from pathlib import Path
 
     # divisão do pdf em páginas md
     pages = pmp.to_markdown(arquivo, header= False, footer= False, page_chunks = True, show_progress=True)
@@ -140,13 +141,12 @@ def perguntas_IA(arquivo, lista_perguntas):
         nome_arquivo
     )
 
-    print("nome_arquivo =", nome_arquivo)
+    #print("nome_arquivo =", nome_arquivo)
 
-    print("\nCriando Chroma...")
-    print("Persist:", "./" + nome_arquivo)
-    print("Qtd docs:", len(documents_langchain))
+    #print("\nCriando Chroma...")
+    #print("Persist:", "./" + nome_arquivo)
+    #print("Qtd docs:", len(documents_langchain))
 
-    from pathlib import Path
 
     persist_directory = Path("vectorstores") / "temp_db"
 
@@ -161,11 +161,11 @@ def perguntas_IA(arquivo, lista_perguntas):
         exist_ok=True
     )
 
-    print(persist_directory)
+    #print(persist_directory)
 
-    print("persist_directory =", persist_directory)
-    print("persist_directory absoluto =", persist_directory.resolve())
-    print("existe =", persist_directory.exists())
+    #print("persist_directory =", persist_directory)
+    #print("persist_directory absoluto =", persist_directory.resolve())
+    #print("existe =", persist_directory.exists())
 
     print("Gerando embeddings...")
     # Criação do Vector Store no Chroma
@@ -240,12 +240,12 @@ def perguntas_IA(arquivo, lista_perguntas):
 
     respostas = []
     for pergunta in lista_perguntas:
-        print("Pergunta:", pergunta)
+        #print("Pergunta:", pergunta)
 
-        teste = embeddings.embed_query(pergunta)
-        print(teste)
+        #teste = embeddings.embed_query(pergunta)
+        #print(teste)
 
-        print("Embedding da pergunta OK")
+        #print("Embedding da pergunta OK")
 
         resultados = retriever.invoke(pergunta)
 

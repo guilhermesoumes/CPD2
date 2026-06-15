@@ -145,19 +145,29 @@ def main():
         respostas_IA = _etapa_03_etapa_04(arquivos, perguntas_IA)
     
         conf_geral = round((e1_pct) / 1, 1)
-        print(conf_geral)
+        print('conf_geral: ' + conf_geral)
 
         for relatorio in respostas_IA.keys():
             nome_saida = fc.prox_versao(PATH_OUTPUT_DIR, str(datetime.now().year), br, "ETRC", lote)
-            print(nome_saida)
+            print('nome de saída: ' + nome_saida)
 
             pdf_path = os.path.join(PATH_OUTPUT_DIR, nome_saida + '.pdf')
-            print(pdf_path)
+            print('pdf path: ' + pdf_path)
 
-            print(perguntas_IA)
-            print(respostas_IA)
+            # print(perguntas_IA)
+            print('respostas: \n' + respostas_IA)
 
-
+            print('Dados para relatório pdf \n\n')
+            print('pdf_path: ' + pdf_path)
+            print('relatório: ' + relatorio)
+            print('e1_tabela: ' + e1_tabela)
+            print('e1_ap: ' + e1_ap)
+            print('e1_tot: ' + e1_tot)
+            print('e1_rs: ' + e1_rs)
+            print('e1_rp: ' + e1_rp)
+            print('e1_pct: ' + e1_pct)
+            print('e3_perguntas: ' + perguntas_IA)
+            print('e3_respostas: ' + respostas_IA)
             Template_pdf_estudo.gerar_pdf(
                 pdf_path = pdf_path, 
                 disciplina = 'Estudo de Traçado', 
