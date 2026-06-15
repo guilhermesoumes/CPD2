@@ -70,7 +70,7 @@ def perguntas_IA(arquivo, lista_perguntas):
                 documents_langchain.append(doc) # documents_langchain é uma lista de documentos, onde cada documento é um chunk
 
     # iniciar o LM Studio
-
+    '''
     possiveis_caminhos = [
         Path.home() / "AppData/Local/Programs/LM Studio/LM Studio.exe",
         Path("C:/Program Files/LM Studio/LM Studio.exe"),
@@ -105,7 +105,7 @@ def perguntas_IA(arquivo, lista_perguntas):
 
     import time
     time.sleep(10)
-
+    
     import requests
 
     try:
@@ -119,10 +119,11 @@ def perguntas_IA(arquivo, lista_perguntas):
 
     except Exception as e:
         print(e)
+    '''
 
     # Configuração dos Embeddings
     embeddings = OpenAIEmbeddings(
-        model="text-embedding-qwen3-embedding-4b",
+        model="text-embedding-qwen3-embedding-0.6b",
         openai_api_base="http://127.0.0.1:1234/v1",
         openai_api_key="lm-studio",
         check_embedding_ctx_length=False

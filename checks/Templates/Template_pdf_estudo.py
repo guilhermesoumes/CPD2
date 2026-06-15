@@ -10,6 +10,7 @@ import os
 import funcs.common_functions as fc
 from datetime import datetime
 import re
+from xml.sax.saxutils import escape
 
 
 CONFIG_FILE = fc.resource_path("config.json") # Arquivo com informações do projeto
@@ -253,45 +254,11 @@ def gerar_pdf(pdf_path,
 
 
     # --- Cards ---
-    '''
-    cards = [
-        (conf_geral, "Conformidade Geral", ""),   # total
-        (str(e1_ap + e1_rs)+" / " + str(e1_tot), "Etapa 01", "Disciplinas antecessoras"),
-        (str(e2_ap + e2_rs)+" / " + str(e2_tot), "Etapa 02", "Relação de Documentos Gerais"),
-        (str(e3_ap + e3_rs)+" / " + str(e3_tot), "Etapa 03", "Conteúdo Relatório Fase Básica"),
-        (str(e4_ap + e4_rs)+" / " + str(e4_tot), "Etapa 04", "Conteúdo Relatório Fase Executiva")
-    ]
-    '''
     disciplinas_antecessoras= e1_tabela is not None
-
-    if disciplinas_antecessoras:
-        if fase == "Projeto Básico":
-            cards = [
-            (conf_geral, "Conformidade Geral", ""),   # total
-            (str(e1_ap + e1_rs)+" / " + str(e1_tot), "Etapa 01", "Disciplinas antecessoras"),
-            (str(e2_ap)+" / " + str(e2_tot), "Etapa 02", "Relação de Documentos Gerais"),
-            ('- / -', "Etapa 03", "Conteúdo Relatório")
-            ]
-        else:
-            cards = [
-            (conf_geral, "Conformidade Geral", ""),   # total
-            (str(e1_ap + e1_rs)+" / " + str(e1_tot), "Etapa 01", "Disciplinas antecessoras"),
-            (str(e2_ap)+" / " + str(e2_tot), "Etapa 02", "Relação de Documentos Gerais"),
-            ('- / -', "Etapa 03", "Conteúdo Relatório")
-            ]
-    else:
-        if fase == "Projeto Básico":
-            cards = [
-            (conf_geral, "Conformidade Geral", ""),   # total
-            ("- / -", "Etapa 01", "Disciplinas antecessoras"),
-            (str(e2_ap)+" / " + str(e2_tot), "Etapa 02", "Relação de Documentos Gerais"),
-            ('- / -', "Etapa 03", "Conteúdo Relatório")
-            ]
-        else:
-            cards = [
-            (conf_geral, "Conformidade Geral", ""),   # total
-            ("- / -", "Etapa 01", "Disciplinas antecessoras"),
-            (str(e2_ap)+" / " + str(e2_tot), "Etapa 02", "Relação de Documentos Gerais"),
+    cards = [
+            (conf_geral, "Conformidade Geral", ""),
+            (str(e1_ap + e1_rs)+" / " + str(e1_tot), "Etapa 01", "Disciplinas antecessoras") if e1_tabela is not None else ("- / -", "Etapa 01", "Disciplinas antecessoras"),
+            (str(e2_ap)+" / " + str(e2_tot), "Etapa 02", "Relação de Documentos Gerais") if e2_tabela is not None else ("- / -", "Etapa 02", "Relação de Documentos Gerais"),
             ('- / -', "Etapa 03", "Conteúdo Relatório")
             ]
 
@@ -318,7 +285,7 @@ def gerar_pdf(pdf_path,
 
     # --------------------------------------------------------------
     
-    if disciplinas_antecessoras:
+    if e1_tabela is not None:
         new_page()
         
         # Coordenada inicial
@@ -394,7 +361,7 @@ def gerar_pdf(pdf_path,
         y -= h + 20
         '''
     # -------------------------------------------------------
-    if e2_tabela:
+    if e2_tabela is not None:
         new_page()
 
         # Coordenada inicial
@@ -476,6 +443,9 @@ def gerar_pdf(pdf_path,
     # Transformação de mardown para paragraph. Paragraph é melhor para tratar quebras de linha.
     def md_para_paragraph(texto):
         texto = texto.strip()
+
+        texto = escape(texto)
+
         # Negrito
         texto = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", texto)
 
@@ -502,20 +472,23 @@ def gerar_pdf(pdf_path,
 
     # Dados da tabela
     dados = [['Pergunta', 'Resposta', 'Trecho que comprova']]
-    for i in range(len(e3_perguntas)):
-        resp = re.findall(r"\d+\s*-\s*(.*?)(?=\n\d+\s*-|$)", e3_respostas[i], re.S)
+    for pergunta in range(len(e3_perguntas)):
+        resp = re.findall(r"\d+\s*.\s*(.*?)(?=\n\d+\s*.|$)", e3_respostas[pergunta], re.S)
+        print(pergunta)
+        print(e3_respostas[pergunta])
         #resp = re.findall(r"\d\.\s*(.*?)(?=\n\d\.|$)", e3_respostas[i], re.S)
-        if "sim" in resp[-1].lower():    
+        if "sim" in resp[-1].lower():
             col2 = 'Sim'
         elif "não" in resp[-1].lower():
             col2 = 'Não'
+
+        print(resp)
         resp[-2] = resp[-2].replace("'''", "")
         resp[-2] = resp[-2].strip()
         resp[-2] = resp[-2].replace("\n\n\n", "\n\n")
         resp[-2] = resp[-2].strip()
         resp[-2] = resp[-2].strip()
-        dados.append([Paragraph(e3_perguntas[i], style), col2, Paragraph(md_para_paragraph(resp[-2]), style)])
-        resp[-2]
+        dados.append([Paragraph(e3_perguntas[pergunta], style), col2, Paragraph(md_para_paragraph(resp[-2]), style)])
         print(md_para_paragraph(resp[-2]))
 
 

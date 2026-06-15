@@ -42,15 +42,8 @@ def main():
 
     fc.ensure_output_dirs(PATH_OUTPUT_DIR)
 
-    #etapa = os.path.basename(caminho_dir)[0]
-
-    #print(f"[INFO] PATH_OUTPUT_DIR localizado em: {PATH_OUTPUT_DIR}")
-    #PATH_DIR_PROJ = caminho_dir + f"/{etapa}.{fase_num}.{fase_txt}/{etapa}.{fase_num}.02.Geometrico/"
-    #print(PATH_DIR_PROJ)
-
     # Caminho dos arquivos de template
     PATH_TEMPLATE_DIR = fc.resource_path("checks/Templates")
-    #print(f"[INFO] Template localizado em: {PATH_TEMPLATE_DIR}")
 
     # =========================================================
     # ETAPA 1 — checagem de relatório de aprovação de projeto
@@ -90,19 +83,6 @@ def main():
     # ETAPA 3 — checagem de conteúdo de relatórios
     # =========================================================
     def _etapa_03_etapa_04(arquivos: str, lista_perguntas: list) -> dict:
-        '''
-        etapa = os.path.basename(pasta_projeto)[0:7]
-
-        vol1_dir = pasta_projeto / f"{etapa}1.Relatorio-do-Projeto-e-Documentos-de-Licitacao"
-        vol2_dir = pasta_projeto / f"{etapa}2.Projeto-de-Execucao"
-        vol3_dir = pasta_projeto / f"{etapa}3.Memoria-Justificativa"
-
-        arquivos_pdf = [p.stem for p in vol1_dir.glob("*.pdf")]
-        print(pasta_projeto)
-        print(vol1_dir)
-        print(arquivos_pdf)
-        '''
-
         respostas = {}
 
         if arquivos:
@@ -145,29 +125,13 @@ def main():
         respostas_IA = _etapa_03_etapa_04(arquivos, perguntas_IA)
     
         conf_geral = round((e1_pct) / 1, 1)
-        print('conf_geral: ' + conf_geral)
+        print('conf_geral: ' + str(conf_geral))
 
         for relatorio in respostas_IA.keys():
             nome_saida = fc.prox_versao(PATH_OUTPUT_DIR, str(datetime.now().year), br, "ETRC", lote)
-            print('nome de saída: ' + nome_saida)
 
             pdf_path = os.path.join(PATH_OUTPUT_DIR, nome_saida + '.pdf')
-            print('pdf path: ' + pdf_path)
-
-            # print(perguntas_IA)
-            print('respostas: \n' + respostas_IA)
-
-            print('Dados para relatório pdf \n\n')
-            print('pdf_path: ' + pdf_path)
-            print('relatório: ' + relatorio)
-            print('e1_tabela: ' + e1_tabela)
-            print('e1_ap: ' + e1_ap)
-            print('e1_tot: ' + e1_tot)
-            print('e1_rs: ' + e1_rs)
-            print('e1_rp: ' + e1_rp)
-            print('e1_pct: ' + e1_pct)
-            print('e3_perguntas: ' + perguntas_IA)
-            print('e3_respostas: ' + respostas_IA)
+            
             Template_pdf_estudo.gerar_pdf(
                 pdf_path = pdf_path, 
                 disciplina = 'Estudo de Traçado', 
